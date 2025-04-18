@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: museum-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: museum-app
+  template:
+    metadata:
+      labels:
+        app: museum-app
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9000"
+    spec:
+      containers:
+        - name: museum-app
+          image: anujrishu4454/museum-app:latest
+          ports:
+            - containerPort: 9000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "9000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: museum-app
+spec:
+  type: NodePort
+  selector:
+    app: museum-app
+  ports:
+    - port: 9000
+      targetPort: 9000
+      nodePort: 30080

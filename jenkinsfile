@@ -1,0 +1,27 @@
+pipeline {
+  agent any
+  stages {
+    stage('Build') {
+      steps {
+        sh 'docker-compose build app'
+      }
+    }
+    stage('Test & Lint') {
+      steps {
+        // Add your test/lint commands here if needed
+      }
+    }
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv('SonarQube') {
+          sh 'sonar-scanner -Dsonar.projectKey=museum-app -Dsonar.sources=Server'
+        }
+      }
+    }
+    stage('Deploy') {
+      steps {
+        sh 'docker-compose up -d'
+      }
+    }
+  }
+}
